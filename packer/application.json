@@ -1,0 +1,48 @@
+{
+  "variables": {
+    "version": "0.1",
+    "environment": "prod",
+    "project_name": "vita-mojo",
+    "login_server": "",
+    "aws_ecr_repository_url": "",
+    "aws_ecr_repository_name": ""
+  },
+  "builders": [
+    {
+      "type": "docker",
+      "image": "deis/mock-http-server",
+      "author": "emoshaya@gmail.com",
+      "commit": "true",
+      "ecr_login": "true",
+      "login_server": "{{user `aws_ecr_repository_url`}}",
+      "aws_profile": "vita",
+      "privileged": true
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "{{user `aws_ecr_repository_url`}}",
+        "tag":  "{{user `version`}}"
+      },
+      {
+        "type": "docker-push",
+        "ecr_login": "true",
+        "login_server": "{{user `aws_ecr_repository_url`}}"
+      }
+    ],
+    [
+      {
+        "type": "docker-tag",
+        "repository": "{{user `aws_ecr_repository_url`}}",
+        "tag":  "{{user `environment`}}"
+      },
+      {
+        "type": "docker-push",
+        "ecr_login": "true",
+        "login_server": "{{user `aws_ecr_repository_url`}}"
+      }
+    ]
+  ]
+}

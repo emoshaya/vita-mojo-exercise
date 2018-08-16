@@ -26,9 +26,13 @@ plan:
 apply:
 	terraform apply -auto-approve -refresh=true -input=false "tf.plan"
 
+apply-without-plan:
+	terraform apply -auto-approve -refresh=true -input=false -var "region=${region}" -var "environment=${environment}" -var-file "terraform/${environment}.tfvars" terraform/
+
 ################################################
 # TERRAFORM ACTIONS
 ################################################
 
 plan: update-modules init validate plan
 apply: update-modules init validate plan apply
+apply-fast: update-modules init apply-without-plan
